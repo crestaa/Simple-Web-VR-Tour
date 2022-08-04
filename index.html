@@ -1,0 +1,94 @@
+<html>
+
+<head>
+    <script src="https://storage.googleapis.com/vrview/2.0/build/vrview.min.js"></script>
+</head>
+
+<body>
+    <div id='vrview'></div>
+
+</body>
+
+<script>
+    //VIEW COMPOSITION
+    /*
+    img: image's url
+    ref_id: reference id for connecting to hotspots for movements
+    hspot: array of hotspots
+        name: hotspot id for click events
+        pitch: [-180,180] down-up
+        yaw: [-180,180] left-right
+        radius
+        distance
+    */
+    var views = [];
+    views[0] = {
+        img: 'first.jpg',
+        ref_id: 'first',
+        hspot: [{
+            name: 'second',
+            pitch: 180,
+            yaw: -40,
+            radius: 0.05,
+            distance: 2
+        }]
+    };
+    views[1] = {
+        img: 'second.jpg',
+        ref_id: 'second',
+        hspot: [{
+            name: 'first',
+            pitch: 180,
+            yaw: -40,
+            radius: 0.05,
+            distance: 2
+        }, {
+            name: 'test2',
+            pitch: 0,
+            yaw: 0,
+            radius: 0.05,
+            distance: 2
+        }]
+    };
+
+
+    //SETUP
+    var vrView = new VRView.Player('#vrview', {
+        image: views[0].img,
+        width: '100%',
+        height: '100%'
+    });
+    vrView.on('ready', function() {
+        changeView(views[0]);
+    });
+
+    //CLICK HANDLER FOR CHANGING VIEW
+    vrView.on('click', function(event) {
+        views.forEach(v => {
+            if (event.id == v.ref_id) {
+                changeView(v);
+            }
+        });
+    });
+
+    /*
+        SWITCH TO VIEW RECEIVED AS PARAMETER
+        sets image and hotspots   
+    */
+    function changeView(view) {
+        vrView.setContent({
+            image: view.img,
+        });
+        view.hspot.forEach(h => {
+            vrView.addHotspot(h.name, {
+                pitch: h.pitch,
+                yaw: h.yaw,
+                radius: h.radius,
+                distance: h.distance,
+                color: 'red'
+            });
+        });
+    }
+</script>
+
+</html>
